@@ -1,0 +1,44 @@
+{% extends 'basef.html' %}
+
+<!-- NAME -->
+{% block name %} Time Table {% endblock %}
+
+<!-- CONTANT -->
+
+{% block contant%}
+<div class="content">
+
+    <table class="table table-dark">
+
+        <tr class="bg-primary">
+            <th scope="col">Weekday</th>
+            <th scope="col">Course id</th>
+            <th scope="col">Start Time</th>
+            <th scope="col">End Time</th>
+            <th scope="col">Room</th>
+        </tr>
+
+
+        {% for display in result %}
+        <tr scope="row">
+            <td>{{display.0}}</td>
+            <td>{{display.1}}</td>
+            <td>{{display.2}}</td>
+            <td>{{display.3}}</td>
+            <td>{{display.4}}</td>
+        </tr>
+        {% endfor %}
+
+
+    </table>
+
+
+
+
+
+</div>
+{% endblock %}
+
+<!-- SCRIPT -->
+
+{% block script %} {% endblock %}

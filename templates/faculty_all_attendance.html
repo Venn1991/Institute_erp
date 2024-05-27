@@ -1,0 +1,91 @@
+{% extends 'basef.html' %}
+
+<!-- NAME -->
+{% block name %} Attendance {% endblock %}
+
+<!-- CONTANT -->
+
+{% block contant%}
+<div class="content">
+
+    <form method="POST">
+
+        {{ form.as_p }} {% csrf_token %}
+        <button type="submit" class="btn btn-success">Submit</button>
+
+    </form>
+    <hr>
+    <h4>{{ courseid }}</h4>
+    <hr>
+    <table id="result" class="table table-dark">
+
+        <tr class="bg-primary">
+            <th scope="col">Student ID</th>
+            <th scope="col">Total Lectures</th>
+            <th scope="col">Attended Lectures</th>
+            <th></th>
+        </tr>
+
+
+        {% for display in result %}
+        <tr scope="row">
+            <td><a href="javascript:;" onclick="singleStudent({{display.0}},{{ac_year}},{{semester}})">{{display.0}}</a></td>
+            <td>{{display.1}}</td>
+            <td>{{display.2}}</td>
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+</div>
+{% endblock %}
+
+<!-- SCRIPT -->
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.mjs"></script>
+<script>
+    const csrftoken = Cookies.get('csrftoken');
+
+    function csrfSafeMethod(method) {
+        return ['GET', 'HEAD', 'OPTIONS', 'TRACE'].includes(method);
+    }
+
+    function sendJSON(data, url, csrftoken) {
+
+
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: data,
+            success: function(response) {
+                console.log("Sent successfully!!")
+            }
+
+        });
+
+    }
+
+    function singleStudent(studentid, ac_year, semester) {
+        new_url = location.protocol + "//" + location.host + "/faculty/attendance/";
+        data = {
+            'studentid': JSON.stringify(studentid),
+            'year': JSON.stringify(ac_year),
+            'semester': JSON.stringify(semester)
+        }
+        sendJSON(data, new_url, csrftoken);
+
+        window.location.href = new_url;
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends 'basef.html' %}
+
+<!-- NAME -->
+{% block name %} Marks {% endblock %}
+
+<!-- CONTANT -->
+
+{% block contant%}
+<div class="content">
+
+    <table id="result" class="table table-dark">
+
+        <tr class="bg-primary">
+            <th scope="col" style="display:none">Marks ID</th>
+            <th scope="col" style="display:none">Exam ID</th>
+            <th scope="col">Exam Type</th>
+            <th scope="col">Obtained Marks</th>
+            <th scope="col">Total Marks</th>
+        </tr>
+
+
+        {% for display in result %}
+        <tr scope="row">
+            <td style="display:none">{{display.0 }}</td>
+            <td style="display:none">{{display.1 }}</td>
+            <td>{{display.2}}</td>
+            <td><input type="number" name="obtained" min="0" max="{{display.4}}" value="{{display.3}}"></td>
+            <td>{{display.4}}</td>
+        </tr>
+        {% endfor %}
+
+    </table>
+    <hr>
+    <button type="submit" onclick="sendJSON();" class="btn btn-success">Save</button>
+
+
+
+</div>
+{% endblock %}
+
+<!-- SCRIPT -->
+
+{% block script %}
+<script>
+    const csrftoken = Cookies.get('csrftoken');
+    var arr = [];
+    $(function() {
+        getString();
+    });
+
+    function getString() {
+        var total_rows = document.getElementById("result").rows.length;
+
+        for (var i = 1; i < total_rows; i++) {
+            temp = document.getElementById("result").rows[i].cells[3].getElementsByTagName("input")[0].value;
+            arr.push(temp);
+        }
+        console.log(arr);
+    }
+
+
+    function csrfSafeMethod(method) {
+        return ['GET', 'HEAD', 'OPTIONS', 'TRACE'].includes(method);
+    }
+
+    function sendJSON() {
+        updates = {}
+        var total_rows = document.getElementById("result").rows.length;
+
+        for (var i = 1; i < total_rows; i++) {
+            temp = document.getElementById("result").rows[i].cells[3].getElementsByTagName("input")[0].value;
+            if (temp != arr[i - 1]) {
+                temp2 = document.getElementById("result").rows[i].cells[0].innerHTML;
+                updates[temp2] = temp;
+            }
+        }
+        console.log(updates);
+
+
+        console.log("Button Clicked");
+
+
+
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $.ajax({
+            url: "/faculty/marks_update/",
+            type: "POST",
+            data: {
+                'updates': JSON.stringify(updates)
+            },
+            success: function(response) {
+                console.log("Sent successfully!!")
+            }
+
+        });
+
+
+    }
+</script>
+{% endblock %}

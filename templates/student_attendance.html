@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+<!-- NAME -->
+{% block name %} Attendance {% endblock %}
+<!-- CONTANT -->
+{% block contant%}
+<div class="content">
+
+    <form method="POST">
+
+        {{ form.as_p }} {% csrf_token %}
+        <button type="submit" class="btn btn-success">Submit</button>
+
+    </form>
+    <hr>
+    <table class="table table-dark">
+
+        <tr class="bg-primary">
+            <th scope="col">Course id</th>
+            <th scope="col">Total classes</th>
+            <th scope="col">Attended classes</th>
+        </tr>
+
+
+        {% for display in result %}
+        <tr scope="row">
+            <td>{{display.0}}</td>
+            <td>{{display.1}}</td>
+            <td>{{display.2}}</td>
+        </tr>
+        {% endfor %}
+
+
+    </table>
+
+
+
+
+
+</div>
+{% endblock %}
